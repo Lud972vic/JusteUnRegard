@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Media;
 use App\User;
 use App\Civilite;
 use App\Ville;
@@ -12,7 +13,6 @@ use Intervention\Image\ImageManagerStatic as Image;
 
 class UserController extends Controller
 {
-
     /**
      * Display a listing of the resource.
      *
@@ -21,7 +21,7 @@ class UserController extends Controller
     public function index()
     {
         $civilites = Civilite::all();
-        $villes = Ville::all();
+        $villes = Ville::all(['id', 'code_postal_ville_geo', 'nom_ville_geo']);
         $profils = Profil::all();
 
         return view('Frontend.inscription.inscription', ['civilites' => $civilites, 'villes' => $villes, 'profils' => $profils]);
@@ -47,7 +47,7 @@ class UserController extends Controller
                 'profil_id' => 'required',
                 'ville_id' => 'required',
                 'photo_adh' => 'image|mimes:jpeg,png,jpg|max:5000'
-//                'acceptcondition' => 'required'
+//              'acceptcondition' => 'required'
             ]
         );
 
@@ -99,16 +99,15 @@ class UserController extends Controller
         ]);
 
         if ($resultat) {
-            return redirect('moncompte');
+            return redirect('voirmoncompte');
         } else {
             //Si erreur, on retourne sur la page de connexion et on garde l'email utilisateur
             return back()->withInput()->withErrors(['email' => 'Vos identifiants sont incorrects.']);
         };
     }
 
-
     /*Mon compte utilisateur*/
-    public function moncompte()
+    public function voirmoncompte()
     {
         /*On vérifie si l'utilisateur est connecté, par défaut guest (non connecté)*/
         if (auth()->guest()) {
@@ -119,15 +118,16 @@ class UserController extends Controller
         $civilites = Civilite::all();
         $villes = Ville::all();
         $profils = Profil::all();
-        $users = User::all()->where('id', '=', '105')->first();
-
-        ($users);
-
-        return view('frontend.inscription.moncompte', ['civilites' => $civilites, 'villes' => $villes, 'profils' => $profils, 'users' => $users]);
+        $users = User::find(auth()->user()->id);
+        $mediasImages = Media::where('user_id', '=', $users->id)
+            ->where('type_fichier_media', '=', 'image/jpeg')
+            ->paginate(4);
+        $mediasTutoriaux = Media::where('user_id', '=', $users->id)->where('type_fichier_media', '=', 'video/mp4')->paginate(4);
+        return view('frontend.inscription.voirmoncompte', ['civilites' => $civilites, 'villes' => $villes, 'profils' => $profils, 'users' => $users, 'mediasImages' => $mediasImages, 'mediasTutoriaux' => $mediasTutoriaux]);
     }
 
     /*Déconnection de l'utilisateur et redirection vers la page d'accueil*/
-    public function deconnection()
+    public function deconnectermoncompte()
     {
         auth()->logout();
         return redirect('/');
@@ -140,7 +140,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-
     }
 
     /**
@@ -151,7 +150,6 @@ class UserController extends Controller
      */
     public function show($id)
     {
-
     }
 
     /**
@@ -160,7 +158,7 @@ class UserController extends Controller
      * @param int $id
      * @return Response
      */
-    public function edit(Request $request)
+    public function editermoncompte(Request $request)
     {
         /*Recuperer les informations de l'utilisateur connecté*/
         if (auth()->guest()) {
@@ -196,19 +194,26 @@ class UserController extends Controller
         }
 
         auth()->user()->update([
+
+            'civilite_id' => request('civilite_id'),
             'name' => request('name'),
             'prenom_adh' => request('prenom_adh'),
             'pseudo_adh' => request('pseudo_adh'),
             'email' => request('email'),
             'password' => bcrypt(request('password')),
-            'civilite_id' => request('civilite_id'),
-            'profil_id' => request('profil_id'),
-            'ville_id' => request('ville_id'),
             'photo_adh' => $nameImage,
+            'profil_id' => request('profil_id'),
+            'dt_naiss_adh' => request('dt_naiss_adh'),
+            'telephone_adh' => request('telephone_adh'),
+            'descrip_adh' => request('descrip_adh'),
+            'ville_id' => request('ville_id'),
+            'cpt_instagram' => request('cpt_instagram'),
+            'cpt_facebook' => request('cpt_facebook'),
+            'cpt_rs_autre' => request('cpt_rs_autre')
         ]);
 
         flash('Mise à jour de votre compte avec succès !')->success();
-        return redirect('moncompte');
+        return redirect('voirmoncompte');
     }
 
     /**
@@ -219,20 +224,22 @@ class UserController extends Controller
      */
     public function update($id)
     {
-
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param int $request
      * @return Response
      */
-    public function destroy($id)
+    public function supprimermoncompte(Request $request)
     {
-
+        /*Supprimer son compte utilisateur*/
+        $user = User::find($request->id);
+        $user->delete();
+        return redirect()->route('index');
+        flash('Désolé de vous voir partir, surement à bientôt !')->success();
     }
-
 }
 
 ?>

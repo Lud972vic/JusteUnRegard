@@ -30,6 +30,5 @@
 <script src="{{asset('js/navigation.js')}}"></script>
 <!--Fin : Les Scripts JS-->
 
-
 <!--Mode carousel quand on clique sur une image & Affichage la partie card-body quand la souris se trouve sur une image du mur de photo-->
 <script src="{{asset('js/card-body.js')}}"></script>

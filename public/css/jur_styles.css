@@ -23,7 +23,7 @@ hr {
 
 /*.color-link {
     color: rgb(51, 53, 52);
-} 
+}
 
 
 .color-link:hover {
@@ -120,9 +120,9 @@ hr {
     /*Mur de photo
     https://developer.mozilla.org/fr/docs/Web/CSS/object-fit
     La propriété CSS object-fit définit la façon dont le contenu d'un élément remplacé (<img> ou <video> par exemple) doit s'adapter à son conteneur en utilisant sa largeur et sa hauteur.
-    Cover : 
-    Le contenu remplacé est dimensionné pour maintenir son ratio d'affichage tout en remplissant toute la boîte de contenu. 
-    La taille réelle est calculée pour couvrir la zone décrite par la hauteur et la largeur de l'élément. 
+    Cover :
+    Le contenu remplacé est dimensionné pour maintenir son ratio d'affichage tout en remplissant toute la boîte de contenu.
+    La taille réelle est calculée pour couvrir la zone décrite par la hauteur et la largeur de l'élément.
     Si les ratios de l'objet et de la boîte ne correspondent pas, le contenu remplacé sera rogné.
     */
     /*1rem = 10px https://connect.adfab.fr/dev/dev-front/unite-de-mesure-css-rem*/

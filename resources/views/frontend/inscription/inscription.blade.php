@@ -138,7 +138,7 @@
                                                 value="{{old('ville_id')}}">
                                                 @foreach($villes as $ville)
                                                     <option
-                                                        value="{{$ville->id}}">{{"(" . $ville->code_postal_ville_geo . ") " . $ville->nom_ville_geo}}</option>
+                                                        value="{{$ville->id}}">{{ $ville->code_postal_ville_geo . " " . $ville->nom_ville_geo}}</option>
                                                 @endforeach
                                         </select>
                                     </div>

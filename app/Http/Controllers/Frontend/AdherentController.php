@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 class AdherentController extends Controller
 {
-    public function index()
+    public function ousetrouventnosadherents()
     {
         $listeUsers = DB::table('users')
             ->join('villes', 'users.ville_id', '=', 'villes.id')
@@ -28,6 +28,6 @@ class AdherentController extends Controller
         }
 
         $marker = json_encode($markers);
-        return view('frontend.adherent.index', ['marker' => $marker]);
+        return view('frontend.adherent.ousetrouventnosadherents', ['marker' => $marker]);
     }
 }

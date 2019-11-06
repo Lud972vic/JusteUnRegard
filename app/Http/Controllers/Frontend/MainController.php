@@ -12,8 +12,10 @@ class MainController extends Controller
     {
         $medias = DB::table('medias')
             ->join('users', 'medias.user_id', '=', 'users.id')
-            ->select('medias.*', 'users.*')
+            ->select('medias.*', 'users.pseudo_adh')
+            // ->select('medias.*', 'users.*')
             ->where('type_fichier_media', '=', 'image/jpeg')
+            ->where('bannir', '=', '1')
             ->orderByRaw('RAND()')->take(12)
             ->get();
 

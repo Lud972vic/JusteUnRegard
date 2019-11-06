@@ -10,7 +10,7 @@ class CreateDonsTable extends Migration {
 		Schema::create('dons', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('lib_don', 50);
+			$table->string('lib_don', 100);
 			$table->integer('montant_don')->unsigned();
 			$table->integer('user_id')->unsigned();
 		});

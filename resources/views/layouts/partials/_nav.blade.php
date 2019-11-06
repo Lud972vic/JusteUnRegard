@@ -56,10 +56,11 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownPortfolio">
                         <div class="dropdown-header">Vos médias</div>
-                        <a class="dropdown-item" href="{{route('murdephotographie')}}" alt="Vos photographies."><i
+                        <a class="dropdown-item" href="{{route('murdephotographies')}}" alt="Vos photographies."><i
                                 class="far fa-image"></i> Vos photographies</a>
-                        <a class="dropdown-item" href="#" alt="Vos tutoriaux."><i class="fas fa-camera"></i>
-                            Vos tutoriaux</a>
+                        <a class="dropdown-item" href="{{route('murdetutoriels')}}" alt="Vos tutoriels."><i
+                                class="fas fa-camera"></i>
+                            Vos tutoriels</a>
                         <div class="dropdown-header">Vos matériels</div>
                         <a class="dropdown-item" href="#" alt=""><i class="fas fa-shopping-cart"></i> Vente,
                             Location...</a>
@@ -72,7 +73,6 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownQuiSommesNous" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
-
                         <i class="fas fa-info-circle"></i> Informations
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownQuiSommesNous">
@@ -80,44 +80,42 @@
                     </div>
                 </li>
 
-            <?php
-            //Lien vers "Mon profile", que si l'utilisateur est logué
-            if (isset($_SESSION['connect'])) {
-                echo('
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMonProfil" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Mon profil
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMonProfil">
+                <?php if(auth()->guard()->guest()): ?>
+                <li class="nav-item">
+                    <a class="nav-link" href="seconnecter" alt="Le menu Se connecter"><i class="fas fa-user-lock"></i>Connectez-vous</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="inscription" alt="Le menu S'inscrire"><i class="fas fa-pencil-alt"></i>S'inscrire</a>
+                </li>
+                <?php else: ?>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMonProfil" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false">Mon profil</a>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMonProfil">
+                        <a class="dropdown-item" href="{{route('voirmoncompte')}}" alt="Le menu Mon compte">Mon compte
+                            <strong>{{{ isset(Auth::user()->name) ? Auth::user()->name : Auth::user()->name }}}</strong></a>
+                        <a class="dropdown-item" href="{{route('donnation')}}" alt="Le menu Donnation">Donnation</a>
+                        <a class="dropdown-item" href="#" alt="Le menu Blog">Blog</a>
+                        <a class="dropdown-item" href="{{ route('deconnectermoncompte') }}"
+                           alt="Le menu Se déconnecter">Se déconnecter</a>
 
-                            ');
-                echo('<a class="dropdown-item" href="user_profil.php?id_adh=' . urlencode(base64_encode($_SESSION['id_adh'])) . '" alt="Le menu Mes informations">Bienvenue ' . $_SESSION['pseudo_adh'] . ' sur vos paramètres</a>');
-                echo('
-                                    <a class="dropdown-item" href="#" alt="Le menu Prestation payante ou don">Prestation payante ou don</a>
-                                    <a class="dropdown-item" href="#" alt="Le menu Blog">Blog</a>
-                                    <a class="dropdown-item" href="#" alt="Le menu Se déconnecter">Se déconnecter</a>
-                                    <a class="dropdown-item" href="#" alt="Administration du site">Admin</a>
-                                </div>
-                            </li>
-                        ');
-            } else {
-                echo('
-                            <li class="nav-item">
-                                <a class="nav-link" href="seconnecter" alt="Le menu Se connecter"><i class="fas fa-user-lock"></i> Connectez-vous</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="inscription" alt="Le menu S\'inscrire"><i class="fas fa-pencil-alt"></i> S\'inscrire</a>
-                            </li>
-                        ');
-            }
-            ?>
+
+                        {{--On vérifie qu'on est admin pour afficher le menu d'administration--}}
+                        <?php if(auth()->user()->hasRole('Administrateur')): ?>
+                        <a class="dropdown-item" href="{{route('gestiondesutilisateursshow_users')}}"
+                           alt="Administration du site"><span style="color: red"><i class="fa fa-unlock prefix"></i> vous êtes admin</span></a>
+                        <?php endif; ?>
+                    </div>
+                </li>
+            <?php endif; ?>
 
             <!--Bouton Recherche
-                    ml-auto : place l'ensemble de Input + Bouton à droite du Nav
-                    input-group : via un autre div, colle le Bouton Recherche juste à coté du champ Input
-                    input-group-append : ajouter derriere le champ Input le bouton Recherche
-                -->
-                <form class="ml-auto" action="/search.php">
+                        ml-auto : place l'ensemble de Input + Bouton à droite du Nav
+                        input-group : via un autre div, colle le Bouton Recherche juste à coté du champ Input
+                        input-group-append : ajouter derriere le champ Input le bouton Recherche
+                    -->
+                <form class="ml-auto" action="{{route('rechercher')}}" method="post">
+                    @csrf
                     <div class="input-group">
                         <input class="form-control" type="search" placeholder="Rechercher" name="search">
                         <div class="input-group-append">

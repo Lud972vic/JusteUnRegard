@@ -20,8 +20,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-//'name', 'email', 'password',
-        'name', 'prenom_adh', 'pseudo_adh', 'email', 'password', 'civilite_id', 'profil_id', 'ville_id', 'photo_adh'
+        'civilite_id', 'name', 'prenom_adh',
+        'pseudo_adh', 'email', 'password',
+        'photo_adh', 'profil_id', 'dt_naiss_adh',
+        'telephone_adh', 'descrip_adh', 'ville_id',
+        'cpt_instagram', 'cpt_facebook', 'cpt_rs_autre'
     ];
 
     /**
@@ -88,4 +91,17 @@ class User extends Authenticatable
         return $this->hasMany('App\Commentaire', 'user_id');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany("App\Role")->withTimestamps();
+    }
+
+    public function hasRole($role)
+    {
+        if ($this->roles()->where('nom', "=", $role)->first()) {
+            /*Si le parametre $role = Administrateur, alors true*/
+            return true;
+        }
+        return false;
+    }
 }

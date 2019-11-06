@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Ville extends Model 
+class Ville extends Model
 {
 
     protected $table = 'villes';
@@ -19,5 +19,4 @@ class Ville extends Model
     {
         return $this->belongsTo('App\Countrie');
     }
-
 }

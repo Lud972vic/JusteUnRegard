@@ -4,11 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Commentaire extends Model 
+class Commentaire extends Model
 {
-
     protected $table = 'commentaires';
     public $timestamps = true;
+    /*Les colonnes autorisées à être modifidier*/
+    protected $fillable = ['user_id', 'media_id', 'lib_comm'];
 
     public function media()
     {
@@ -19,5 +20,4 @@ class Commentaire extends Model
     {
         return $this->belongsTo('App\User');
     }
-
 }

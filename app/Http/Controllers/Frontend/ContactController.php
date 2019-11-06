@@ -21,7 +21,7 @@ class ContactController extends Controller
     public function postNousContacter(ContactRequest $request)
     {
         Mail::send('frontend.quisommesnous.email_contact', $request->all(), function ($message) {
-            $message->to('admin@justeunregard.org')->subject('Contact');
+            $message->to('backend@justeunregard.org')->subject('Contact');
         });
         return view('frontend.quisommesnous.confirm');
     }

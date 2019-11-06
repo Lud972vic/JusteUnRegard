@@ -10,14 +10,14 @@ class CreateMediasTable extends Migration {
 		Schema::create('medias', function(Blueprint $table) {
 			$table->increments('id');
 			$table->timestamps();
-			$table->string('nom_media', 255)->unique();
+			$table->string('nom_media', 255);
 			$table->string('lib_media', 255);
 			$table->double('taille_media');
 			$table->integer('noto_media')->unsigned();
 			$table->string('url_media', 255);
 			$table->text('desc_media');
 			$table->string('type_fichier_media', 15);
-			$table->decimal('dure_media')->default('0');
+			$table->string('dure_media',8);
 			$table->integer('categorie_id')->unsigned();
 			$table->integer('user_id')->unsigned();
 		});

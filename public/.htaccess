@@ -18,4 +18,13 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+    
+    # Ludovic Ajouter le 06112019
+    # Désactiver l'affichage du contenu des répertoires
+    	Options All -Indexes
+    # Masquer les informations du serveur
+    # Chez certains hébergeurs, les pages affichées peuvent contenir des informations
+    # relatives au serveur. Ces informations peuvent donner des informations à d’éventuels
+    # assaillants.
+    	ServerSignature Off
 </IfModule>

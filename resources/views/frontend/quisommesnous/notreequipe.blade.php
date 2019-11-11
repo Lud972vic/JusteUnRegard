@@ -21,7 +21,7 @@
         <h1 class="mt-4">Notre équipe</h1>
 
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a class="text-dark" href="index.php">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="text-dark" href="{{route('index')}}">Accueil</a></li>
             <li class="breadcrumb-item text-muted">Qui sommes-nous ? - Notre équipe</li>
         </ol>
         <!-- Fin : Breadcrumb  -->

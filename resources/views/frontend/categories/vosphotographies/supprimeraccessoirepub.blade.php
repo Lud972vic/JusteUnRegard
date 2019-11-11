@@ -16,30 +16,23 @@
                     <div class="col-lg-10 offset-lg-1">
                         <div>
                             <td>
-                                <form action="{{route('supprimerphoto_confirmation',['id'=>$media->id])}}" method="post">
+                                <form action="{{route('supprimeraccessoirepub_confirmation',['id'=>$accessoire->id])}}" method="post">
                                     @csrf
 
                                     <div class="form-actions">
                                         <div class="card border-0 transform-on-hover">
-                                            @if($media->type_fichier_media == 'image/jpeg')
-                                                <img width="400" src="{{asset($media->url_media)}}"
-                                                     alt="{{$media->nom_media}}"
+                                                <img width="400" src="{{asset($accessoire->url_img_1_acc_pub)}}"
+                                                     alt="{{$accessoire->lib_acc_pub}}"
                                                      class="card-img-top">
-                                            @else
-                                                <video width="400" src="{{asset($media->url_media)}}"
-                                                       alt="{{$media->nom_media}}"
-                                                       controls class="card-img-top"></video>
-                                            @endif
-
                                             <div class="card-body text-muted card-text">
                                                 <h6 class="card-title text-secondary badge badge-light">
-                                                    <small><i class="fas fa-tag"></i> {{$media->lib_media}}</small><br>
-                                                    <small><i class="fas fa-user"></i> {{$media->user->pseudo_adh}}
+                                                    <small><i class="fas fa-tag"></i> {{$accessoire->lib_acc_pub}}</small><br>
+                                                    <small><i class="fas fa-user"></i> {{$accessoire->user->pseudo_adh}}
                                                     </small><br>
-                                                    <small><i class="fas fa-camera-retro"></i> {{$media->created_at}}
+                                                    <small><i class="fas fa-camera-retro"></i> {{$accessoire->created_at}}
                                                     </small><br>
                                                     <small> <i
-                                                            class="fas fa-folder-open"></i>{{$media->categorie->lib_cat}}
+                                                            class="fas fa-folder-open"></i>{{$accessoire->typeannonce->lib_type_ann}}
                                                     </small>
                                                 </h6>
 

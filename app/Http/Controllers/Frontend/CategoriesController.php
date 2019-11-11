@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Accessoirepublicite;
 use App\Categorie;
 use App\Media;
+use App\Typeannonce;
 use App\User;
+use http\Params;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Intervention\Image\ImageManagerStatic as Image;
@@ -16,8 +19,20 @@ class CategoriesController extends Controller
         $medias = Media:: where('type_fichier_media', '=', 'image/jpeg')
             ->where('bannir', '=', '1')->paginate(12);
         $users = User::all();
-        return view('frontend.categories.vosphotographies.murdephotographies', ['medias' => $medias, 'users' => $users]);
+        $categories = Categorie::orderBy('lib_cat', 'asc')->get();
+
+        return view('frontend.categories.vosphotographies.murdephotographies', ['medias' => $medias, 'users' => $users, 'categories' => $categories]);
     }
+
+    public function murdephotographiescat(Request $request)
+    {
+        //dd(request());
+        $medias = Media::where('categorie_id', '=', request('cat'))->where('type_fichier_media', '=', 'image/jpeg')->where('bannir', '=', '1')->paginate(12);
+        $categories = Categorie::orderBy('lib_cat', 'asc')->get();
+        $users = User::all();
+        return view('frontend.categories.vosphotographies.murdephotographies', ['medias' => $medias, 'users' => $users, 'categories' => $categories]);
+    }
+
 
     public function murdetutoriels()
     {
@@ -26,10 +41,16 @@ class CategoriesController extends Controller
         return view('frontend.categories.vosphotographies.murdetutoriels', ['medias' => $medias, 'users' => $users]);
     }
 
-    public function voirphoto(Request $request)
+    public function voirmedia(Request $request)
     {
         $media = Media::find($request->id);
-        return view('frontend.categories.vosphotographies.voirphoto', ['media' => $media]);
+        return view('frontend.categories.vosphotographies.voirmedia', ['media' => $media]);
+    }
+
+    public function voiraccessoirepub(Request $request)
+    {
+        $accessoirepub = Accessoirepublicite::find($request->id);
+        return view('frontend.categories.vosphotographies.voiraccessoirepub', ['accessoirepub' => $accessoirepub]);
     }
 
     public function modifiermedia(Request $request)
@@ -51,17 +72,32 @@ class CategoriesController extends Controller
         return back();
     }
 
-    public function supprimerphoto(Request $request)
+    public function supprimermedia(Request $request)
     {
         $media = Media::find($request->id);
-        return view('frontend.categories.vosphotographies.supprimerphoto', ['media' => $media]);
+        return view('frontend.categories.vosphotographies.supprimermedia', ['media' => $media]);
     }
 
-    public function supprimerphoto_confirmation(Request $request)
+    public function supprimeraccessoirepub(Request $request)
+    {
+        $accessoire = Accessoirepublicite::find($request->id);
+        return view('frontend.categories.vosphotographies.supprimeraccessoirepub', ['accessoire' => $accessoire]);
+    }
+
+
+    public function supprimermedia_confirmation(Request $request)
     {
         $media = Media::find($request->id);
         $media->delete();
         flash('Le média <strong>' . $media->nom_media . '</strong> a été supprimé.')->success();
+        return redirect()->route('voirmoncompte');
+    }
+
+    public function supprimeraccessoirepub_confirmation(Request $request)
+    {
+        $accessoire = Accessoirepublicite::find($request->id);
+        $accessoire->delete();
+        flash('Le média <strong>' . $accessoire->lib_acc_pub . '</strong> a été supprimé.')->success();
         return redirect()->route('voirmoncompte');
     }
 
@@ -81,6 +117,58 @@ class CategoriesController extends Controller
 
         return view('frontend.categories.vosphotographies.ajoutervideo', ['medias' => $medias, 'categories' => $categories]);
     }
+
+    public function ajouterproduit()
+    {
+        $accessoires = Accessoirepublicite::all();
+        $typeannonces = Typeannonce::all();
+        return view('frontend.categories.vosphotographies.ajouterproduit', ['accessoires' => $accessoires, 'typeannonces' => $typeannonces]);
+    }
+
+    public function update_accessoire(Request $request)
+    {
+        if ($request->hasFile('url_img_1_acc_pub')) {
+            //Recupérer le nom de l'image saisi par l'utilisateur et tague de celui-ci
+            $img = Image::make($request->file('url_img_1_acc_pub')->getRealPath());
+            //Extension de l'image
+            $ext = $request->file('url_img_1_acc_pub')->getClientOriginalExtension();
+            //Dossier public pour le fichier watermark.png
+            $img->insert(public_path('watermark.png'), 'bottom-right', 50, 50);
+            //On redimensionne l'image
+            $img->resize(null, 1080, function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            //On renomme l'image avec l'id, le nom de l'utilisateur, un id unique et l'extension
+            $new_img = auth()->user()->id . '_' . auth()->user()->name . '_' . uniqid() . '.' . $ext;
+            //Le chemin complet avec le nom du fichier
+            $new_path_img = '/img/adherent/ventes/' . $new_img;
+            //On sauvegarde l'image dans le nouveau repertoire de partage
+            $img->save(public_path() . $new_path_img);
+        }
+
+
+
+
+        $accessoire = New Accessoirepublicite();
+        $accessoire->lib_acc_pub = $request->lib_acc_pub;;
+        $accessoire->desc_acc_pub = $request->desc_acc_pub;
+        $accessoire->dt_debut_acc_pub = $request->dt_debut_acc_pub;
+        $accessoire->dt_fin_acc_pub = $request->dt_fin_acc_pub;
+        $accessoire->statut_visibilite_acc_pub = 1;
+        $accessoire->url_img_1_acc_pub = $new_path_img;
+        $accessoire->typeannonce_id = 2;
+        $accessoire->user_id = auth()->user()->id;
+        $accessoire->prix = $request->prix;
+
+
+
+        $accessoire->save();
+
+        flash('Le média <strong>' . $accessoire->lib_acc_pub . '</strong> a été ajouté.')->success();
+        return redirect()->route('voirmoncompte');
+    }
+
 
     public function ajouterphoto_confirmation(Request $request)
     {

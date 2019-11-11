@@ -21,7 +21,7 @@
         <h1 class="mt-4 mb-3">Nous contacter</h1>
 
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a class="text-dark" href="#">Accueil</a></li>
+            <li class="breadcrumb-item"><a class="text-dark" href="{{route('index')}}">Accueil</a></li>
             <li class="breadcrumb-item text-muted">Qui sommes-nous ? - Nous contacter</li>
         </ol>
         <!-- Fin : Breadcrumb -->
@@ -91,7 +91,7 @@
                 {!! Form::close() !!}
             </div>
         </div>
-        <!-- Fin : Formulaiquisommesnousontact -->
+        <!-- Fin : Formulairequisommesnousontact -->
     </div>
     <!-- Fin : Container -->
 @endsection

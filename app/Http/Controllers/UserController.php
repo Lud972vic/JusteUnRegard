@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Accessoirepublicite;
 use App\Media;
+use App\Typeannonce;
 use App\User;
 use App\Civilite;
 use App\Ville;
@@ -122,8 +124,20 @@ class UserController extends Controller
         $mediasImages = Media::where('user_id', '=', $users->id)
             ->where('type_fichier_media', '=', 'image/jpeg')
             ->paginate(4);
+
+        $accessoires = Accessoirepublicite::where('user_id', '=', $users->id)
+            ->where('typeannonce_id', '=', '2')
+            ->paginate(4);
+
+        $publicites = Accessoirepublicite::where('user_id', '=', $users->id)
+            ->where('typeannonce_id', '=', '1')
+            ->paginate(4);
+
+        $typeannonces = Typeannonce::all();
+
         $mediasTutoriaux = Media::where('user_id', '=', $users->id)->where('type_fichier_media', '=', 'video/mp4')->paginate(4);
-        return view('frontend.inscription.voirmoncompte', ['civilites' => $civilites, 'villes' => $villes, 'profils' => $profils, 'users' => $users, 'mediasImages' => $mediasImages, 'mediasTutoriaux' => $mediasTutoriaux]);
+        return view('frontend.inscription.voirmoncompte', ['civilites' => $civilites, 'villes' => $villes, 'profils' => $profils, 'users' => $users,
+            'mediasImages' => $mediasImages, 'mediasTutoriaux' => $mediasTutoriaux, 'accessoires' => $accessoires, 'typeannonces' => $typeannonces, 'publicites' => $publicites]);
     }
 
     /*Déconnection de l'utilisateur et redirection vers la page d'accueil*/
@@ -166,15 +180,19 @@ class UserController extends Controller
             return redirect('seconnecter');
         }
 
+
+//        dd($request);
+
         $request->validate(
             [
                 'name' => 'required|min:2|max:50',
                 'prenom_adh' => 'required|min:2|max:50',
                 'pseudo_adh' => 'required|min:2|max:50',
-                'email' => 'required|min:10|max:50',
-                'emailconfirm' => 'required|min:10|max:50',
-                'password' => 'required|min:8|max:50',
-                'passwordconfirm' => 'required|min:8|max:50',
+
+                /*Vérification de l'email*/
+                'email' => 'required|confirmed|min:10|max:50',
+                'email_confirmation' => 'required',
+
                 'civilite_id' => 'required',
                 'profil_id' => 'required',
                 'ville_id' => 'required',
@@ -182,26 +200,63 @@ class UserController extends Controller
             ]
         );
 
+
+        /*On vérifie, si l'utilisateur a téléchargé un nouveau avatar*/
         if (isset($request->photo_adh)) {
-            $nameImage = $request->file('photo_adh')->getClientOriginalName();
+            //Recupérer le nom de l'image saisi par l'utilisateur et tague de celui-ci
             $img = Image::make($request->file('photo_adh')->getRealPath());
-            $img->insert(public_path('./img/logo/jur.png'), 'bottom-right', 10, 10);
-            $img->resize(null, 1080, function ($constraint) {
+            //Extension de l'image
+            $ext = $request->file('photo_adh')->getClientOriginalExtension();
+            //Dossier public pour le fichier watermark.png
+            $img->insert(public_path('watermark.png'), 'bottom-right', 50, 50);
+            //On redimensionne l'image
+            $img->resize(null, 480, function ($constraint) {
                 $constraint->aspectRatio();
                 $constraint->upsize();
             });
-            $img->save('./img/adherent/avatars/' . $nameImage);
+            //On renomme l'image avec l'id, le nom de l'utilisateur, un id unique et l'extension
+            $new_img = auth()->user()->id . '_' . auth()->user()->name . '_' . uniqid() . '.' . $ext;
+            //Le chemin complet avec le nom du fichier
+            $new_path_img = '/img/adherent/avatars/' . $new_img;
+            //On sauvegarde l'image dans le nouveau repertoire de partage
+            $img->save(public_path() . $new_path_img);
+        } else {
+            /*Si pas de nouveau avatar, on vérifie si dans la base de donnée un avatar existe*/
+            if (isset($request->photo_adh_hidden)) {
+                $new_img = $request->photo_adh_hidden;
+            } else {
+                /*Sinon on met un avatar par defaut*/
+                $new_img = 'avatar_par_defaut.png';
+            }
+        }
+
+        /*Si nouveau mot de passe, on crypte celui-ci, sinon on garde l'ancien dans la base de donnée*/
+
+        /*Le mot de passe actuel crypté*/
+        $password = (request('password_hidden'));
+
+        if (/*On verifie que les mots de passse sont identiques*/
+            (request('password') == request('password_confirmation'))
+            &&
+            /*On verifie que les valeurs sont différentes de null*/
+            (request('password') != null && request('password_confirmation') != null)
+            &&
+            /*On vérifie le nombre de caractere du mot de passe*/
+            (strlen(request('password')) >= 8 && strlen(request('password')) <= 50)
+        ) {
+            /*On génère le hash du nouveau mot de passe*/
+            $password = bcrypt(request('password'));
+            flash('Le nouveau mot de passe est sauvegardé.')->success();
         }
 
         auth()->user()->update([
-
             'civilite_id' => request('civilite_id'),
             'name' => request('name'),
             'prenom_adh' => request('prenom_adh'),
             'pseudo_adh' => request('pseudo_adh'),
             'email' => request('email'),
-            'password' => bcrypt(request('password')),
-            'photo_adh' => $nameImage,
+            'password' => $password,
+            'photo_adh' => $new_img,
             'profil_id' => request('profil_id'),
             'dt_naiss_adh' => request('dt_naiss_adh'),
             'telephone_adh' => request('telephone_adh'),

@@ -48,6 +48,10 @@
                     <a class="nav-link" href="{{route('ousetrouventnosadherents')}}" alt="Le menu Se connecter"><i
                             class="fas fa-user-friends"></i> Nos adhérents</a>
                 </li>
+                <li>
+                    <a class="nav-link" href="{{route('tchat')}}" alt="Le tchat"><i
+                            class="far fa-comment-dots"></i> Tchat</a>
+                </li>
 
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPortfolio" data-toggle="dropdown"

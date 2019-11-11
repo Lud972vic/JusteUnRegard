@@ -12,6 +12,7 @@
 
     <style type="text/css">
         body {
+            /*Image de fond*/
             background-image: url("{{asset('img/background/pin.jpg')}}") !important;
             background-repeat: no-repeat !important;
             background-size: cover !important;
@@ -41,7 +42,7 @@
                     !</p>
 
                 <div id="map" class="center-div">
-                    <!-- Ici s'affichera la carte -->
+                    <!-- Ici s'affichera la carte dans la div-->
                 </div>
             </div>
         </div>
@@ -60,6 +61,7 @@
 
 
     <script>
+        /*Animation avec la carte au chargement*/
         $(document).ready(function () {
             $("#maptest").hide();
             $("#maptest").fadeIn(5000);

@@ -62,17 +62,33 @@ Route::get('notreequipe', 'Frontend\ContactController@getNotreEquipe')->name('no
 
 /*Catégories -> Vos photographies*/
 Route::get('murdephotographies', 'Frontend\CategoriesController@murdephotographies')->name('murdephotographies');
+Route::post('murdephotographies/categorie/', 'Frontend\CategoriesController@murdephotographiescat')->name('murdephotographiescat');
+
 Route::get('murdetutoriels', 'Frontend\CategoriesController@murdetutoriels')->name('murdetutoriels');
-Route::get('voirphoto/{id}', 'Frontend\CategoriesController@voirphoto')->name('voirphoto');
-Route::get('supprimerphoto/{id}', 'Frontend\CategoriesController@supprimerphoto')->name('supprimerphoto');
-Route::post('supprimerphoto/{id}', 'Frontend\CategoriesController@supprimerphoto_confirmation')->name('supprimerphoto_confirmation');
+Route::get('voirmedia/{id}', 'Frontend\CategoriesController@voirmedia')->name('voirmedia');
+
+Route::get('voiraccessoirepub/{id}', 'Frontend\CategoriesController@voiraccessoirepub')->name('voiraccessoirepub');
+
+Route::get('supprimermedia/{id}', 'Frontend\CategoriesController@supprimermedia')->name('supprimermedia');
+Route::post('supprimermedia/{id}', 'Frontend\CategoriesController@supprimermedia_confirmation')->name('supprimermedia_confirmation');
+
+Route::get('supprimeraccessoirepub/{id}', 'Frontend\CategoriesController@supprimeraccessoirepub')->name('supprimeraccessoirepub');
+Route::post('supprimeraccessoirepub/{id}', 'Frontend\CategoriesController@supprimeraccessoirepub_confirmation')->name('supprimeraccessoirepub_confirmation');
+
 Route::get('modifiermedia/{id}', 'Frontend\CategoriesController@modifiermedia')->name('modifiermedia');
 Route::post('modifiermedia/{id}', 'Frontend\CategoriesController@modifiermedia_confirmation')->name('modifiermedia_confirmation');
 
 Route::get('ajouterphoto', 'Frontend\CategoriesController@ajouterphoto')->name('ajouterphoto');
 Route::get('ajoutervideo', 'Frontend\CategoriesController@ajoutervideo')->name('ajoutervideo');
+
+
+Route::get('ajouterproduit/{option}', 'Frontend\CategoriesController@ajouterproduit')->name('ajouterproduit');
+Route::post('update_accessoire', 'Frontend\CategoriesController@update_accessoire')->name('update_accessoire');
+
 Route::post('ajouterphoto', 'Frontend\CategoriesController@ajouterphoto_confirmation')->name('ajouterphoto_confirmation');
 Route::post('ajoutervideo', 'Frontend\CategoriesController@ajoutervideo_confirmation')->name('ajoutervideo_confirmation');
+
+
 
 /*Ajouter un commentaire*/
 Route::post('ajoutercommentaire', 'CommentaireController@ajoutercommentaire')->name('ajoutercommentaire');
@@ -87,6 +103,10 @@ Auth::routes(['verify' => true]);
 /*Seuls les utilisateurs vérifiés peuvent entrer ...*/
 Route::get('profile', function () {
 })->middleware('verified');
+
+/*Tchat*/
+Route::get('tchat', 'Frontend\BlogController@show')->name('tchat');
+
 
 /*Backend*/
 Route::middleware('verify.admin')->group(function () {

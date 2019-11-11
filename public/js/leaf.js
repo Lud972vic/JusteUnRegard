@@ -17,7 +17,7 @@ var myIcon = L.icon({
 var markerClusters = L.markerClusterGroup();
 
 for (var i = 0; i < markers.length; ++i) {
-    var popup = "<b>Salut, je suis </b>" + '<b>' + markers[i].name + ', </b><br/>je réside à ' + markers[i].city + '<br> et je suis ' + markers[i].profil + ' en photographie.'
+    var popup = "<b>Salut, je suis </b>" + '<b>' + markers[i].name + ', </b><br/>je réside à ' + markers[i].city + '<br> et je suis un ' + markers[i].profil
     ;
 
     var m = L.marker([markers[i].lat, markers[i].lng], {icon: myIcon}).bindPopup(popup);

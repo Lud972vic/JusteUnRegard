@@ -17,7 +17,26 @@
                 <p>Nos adhérents ont du talent</p>
             </div>
 
-            {{$medias->links()}}
+        {{$medias->links()}}
+
+        <!--Filtre catégorie-->
+            <div class="row">
+                <form action="{{route('murdephotographiescat',['cat'=>request('cat')])}}" method="post">
+                    @csrf
+                    <div class="form-group">
+                        <label for="cat">Choisir une catégorie :</label>
+                        <select onsubmit="{{route('murdephotographiescat',['cat'=>request('cat')])}}" id="cat"
+                                name="cat">
+                            <option value="0">Tous</option>
+                            @foreach($categories as $categorie)
+                                <option value="{{$categorie->id}}">{{$categorie->lib_cat}}</option>
+                            @endforeach
+                        </select>
+                        <input id="monFiltre" class="btn btn-sm btnMedia btn-outline-primary" type="submit"
+                               value="Valider">
+                    </div>
+                </form>
+            </div>
 
             <div class="row no-padding">
                 @foreach($medias as $media)
@@ -32,6 +51,28 @@
                                     <small><i class="fas fa-camera-retro"></i> {{$media->created_at}} <i
                                             class="fas fa-folder-open"></i>{{$media->categorie->lib_cat}}
                                     </small></h6>
+
+                                {{--Si l'tilisateur a partagé des liens réseaux, on les affiches--}}
+                                <br>
+                                @if($media->user->cpt_facebook != null || $media->user->cpt_facebook !="")
+                                    <a href="{{$media->user->cpt_facebook}}" target="_blank">
+                                        <img class="rounded-circle"
+                                             src="{{asset('./img/reseauxsociaux/facebook.png')}}" width="5%">
+                                    </a>
+                                @endif
+                                @if($media->user->cpt_instagram != null || $media->user->cpt_instagram !="")
+                                    <a href="{{$media->user->cpt_instagram}}" target="_blank">
+                                        <img class="rounded-circle"
+                                             src="{{asset('./img/reseauxsociaux/instagram.png')}}" width="5%">
+                                    </a>
+                                @endif
+                                @if($media->user->cpt_rs_autre != null || $media->user->cpt_rs_autre !="")
+                                    <a href="{{$media->user->cpt_rs_autre}}" target="_blank">
+                                        <img class="rounded-circle"
+                                             src="{{asset('./img/reseauxsociaux/autre.png')}}" width="5%">
+                                    </a>
+                                @endif
+
                                 <details class="card-text text-muted">
                                     <summary><small><i class="fas fa-keyboard"></i> {{$media->desc_media}}</small>
                                     </summary>
@@ -39,7 +80,7 @@
                                         @foreach($users as $user)
                                             @if($user->id == $c->user_id)
                                                 <br> <small class="badge badge-light">{{$user->pseudo_adh}}
-                                                     {{$c->created_at}} {{$c->lib_comm}}</small>
+                                                    {{$c->created_at}} {{$c->lib_comm}}</small>
                                             @endif
                                         @endforeach
                                     @endforeach
@@ -96,7 +137,6 @@
                                             <i class="fas fa-ban"></i> Bannir
                                         </button>
                                     </form>
-
                                     <?php endif; ?>
                                 </div>
                             </div>
@@ -122,7 +162,7 @@
         x = 0;
         y = 0;
 
-        $('.card').mouseenter(function () {
+        $('.card').mouseenter(function (toto) {
             $(this).width('634.328px'); /*On agrandit la card*/
             //.height('240px')
             $(this).find('.imgMurPhoto').width('634.328px'); /*On agrandit la photo*/
